@@ -12,21 +12,24 @@ import android.hardware.SensorManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener ,
         OnClickListener {
     private SensorManager _sensorManager;
     private Button btnStart, btnStop;
     private boolean started = false;
-    private ArrayList sensorData;
+    private Sensor accel, gyro;
+    private putData data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         _sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        sensorData = new ArrayList();
 
+        accel = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        gyro = _sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
         btnStart.setOnClickListener(this);
@@ -38,12 +41,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume(){
         super.onResume();
+        _sensorManager.registerListener(this, accel,
+                SensorManager.SENSOR_DELAY_FASTEST);
+        _sensorManager.registerListener(this, gyro,
+                SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (started == true){
+        if (started){
             _sensorManager.unregisterListener(this);
         }
     }
@@ -60,9 +67,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             double y = event.values[1];
             double z = event.values[2];
             long timestamp = event.timestamp;
-
-            putData data = new putData(timestamp, "A", x, y, z);
-            sensorData.add(data);
+            data = new putData(timestamp, "A", x, y, z);
         }
 
         if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
@@ -70,9 +75,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             double y = event.values[1];
             double z = event.values[2];
             long timestamp = event.timestamp;
-
-            putData data = new putData(timestamp, "G", x, y, z);
-            sensorData.add(data);
+            data = new putData(timestamp, "G", x, y, z);
         }
     }
 
@@ -85,20 +88,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sensorData = new ArrayList();
                 // save prev data if available]
                 started = true;
-
-                // acceleration sensor initialization
-                Sensor accel = _sensorManager
-                        .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-                // gyroscope sensor initialization
-                Sensor gyro = _sensorManager
-                        .getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-                // acceleration sensorManager
                 _sensorManager.registerListener(this, accel,
                         SensorManager.SENSOR_DELAY_FASTEST);
-
-                // gyroscope sensorManager
                 _sensorManager.registerListener(this, gyro,
                         SensorManager.SENSOR_DELAY_FASTEST);
                 break;
@@ -106,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 btnStart.setEnabled(true);
                 btnStop.setEnabled(false);
                 started = false;
+                Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
