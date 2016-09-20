@@ -1,4 +1,4 @@
-package com.example.cody.homework1;
+package com.example.rtalukder.hw1;
 
 import java.util.ArrayList;
 import android.content.Intent;
@@ -55,12 +55,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (started){
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
             double x = event.values[0];
             double y = event.values[1];
             double z = event.values[2];
-            long timestamp = System.currentTimeMillis();
-            AccelData data = new AccelData(timestamp, x, y, z);
+            long timestamp = event.timestamp;
+
+            putData data = new putData(timestamp, "A", x, y, z);
+            sensorData.add(data);
+        }
+
+        if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            double x = event.values[0];
+            double y = event.values[1];
+            double z = event.values[2];
+            long timestamp = event.timestamp;
+
+            putData data = new putData(timestamp, "G", x, y, z);
             sensorData.add(data);
         }
     }
@@ -74,9 +85,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sensorData = new ArrayList();
                 // save prev data if available]
                 started = true;
+
+                // acceleration sensor initialization
                 Sensor accel = _sensorManager
                         .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+                // gyroscope sensor initialization
+                Sensor gyro = _sensorManager
+                        .getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+                // acceleration sensorManager
                 _sensorManager.registerListener(this, accel,
+                        SensorManager.SENSOR_DELAY_FASTEST);
+
+                // gyroscope sensorManager
+                _sensorManager.registerListener(this, gyro,
                         SensorManager.SENSOR_DELAY_FASTEST);
                 break;
             case R.id.btnStop:
@@ -91,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /** Called when the user clicks the Send button */
-   /** public void startWalk(View view) {
-        Intent intent = new Intent(this, sensorRun.class);
-        startActivity(intent);
-    }**/
+    /** public void startWalk(View view) {
+     Intent intent = new Intent(this, sensorRun.class);
+     startActivity(intent);
+     }**/
 }
