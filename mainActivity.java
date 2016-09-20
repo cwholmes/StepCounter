@@ -1,7 +1,5 @@
-package com.example.rtalukder.hw1;
+package com.example.cody.homework1;
 
-import java.util.ArrayList;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Context;
@@ -12,6 +10,8 @@ import android.hardware.SensorManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener ,
@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager _sensorManager;
     private Button btnStart, btnStop;
     private boolean started = false;
+    private BlockingQueue<putData> sensorDataBuffer;
     private Sensor accel, gyro;
     private putData data;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+        if (started){
             double x = event.values[0];
             double y = event.values[1];
             double z = event.values[2];
@@ -85,8 +86,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             case R.id.btnStart:
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
-                sensorData = new ArrayList();
-                // save prev data if available]
                 started = true;
                 _sensorManager.registerListener(this, accel,
                         SensorManager.SENSOR_DELAY_FASTEST);
@@ -106,8 +105,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     /** Called when the user clicks the Send button */
-    /** public void startWalk(View view) {
-     Intent intent = new Intent(this, sensorRun.class);
-     startActivity(intent);
-     }**/
+   /** public void startWalk(View view) {
+        Intent intent = new Intent(this, sensorRun.class);
+        startActivity(intent);
+    }**/
 }
+
