@@ -6,9 +6,10 @@ package com.example.cody.homework1;
 
 import java.util.concurrent.BlockingQueue;
 
-public class collectData implements Runnable {
+public class collectData extends Thread {
     private BlockingQueue<putData> sharedQueue;
     private BlockingQueue<putData> writingQueue;
+    private boolean stop = false;
 
     public collectData(BlockingQueue<putData> sensorDataBuffer, BlockingQueue<putData> writingDataQueue) {
         sharedQueue = sensorDataBuffer;
@@ -17,11 +18,18 @@ public class collectData implements Runnable {
 
     @Override
     public void run() {
-        try {
-            writingQueue.put(sharedQueue.take());
-        }
-        catch (InterruptedException ex) {
-            ex.printStackTrace();
+        while (!stop) {
+            try {
+                writingQueue.put(sharedQueue.take());
+            }
+            catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
         }
     }
+
+    public void doStop(){
+        stop = true;
+    }
 }
+
