@@ -4,6 +4,7 @@ package com.example.cody.homework1;
  * Created by Cody on 9/20/2016.
  */
 
+import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
 
@@ -13,8 +14,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.concurrent.BlockingQueue;
 
-public class storeData implements Runnable {
+public class storeData extends Thread {
     private BlockingQueue<putData> writingQueue;
+    private boolean stop = false;
+    private Context ctx;
     public String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Stepping";
 
     public storeData (BlockingQueue<putData> writingDataQueue){
@@ -23,32 +26,47 @@ public class storeData implements Runnable {
 
     @Override
     public void run() {
-        try{
-            writeData(writingQueue.take());
+        while (!stop){
+            try{
+                writeData(writingQueue.take());
+            }
+            catch (Exception ex){
+                Thread.currentThread().interrupt();
+            }
         }
-        catch (Exception ex){
-            Thread.currentThread().interrupt();
-        }
+    }
+
+    public void doStop(){
+        stop = true;
     }
 
     private void writeData(putData data){
         //File sdCard = Environment.getExternalStoragePublicDirectory("sdcard");
-        File dir = new File (path + "/Stepping");
-        dir.mkdirs();
-        File file = new File(Environment.getExternalStoragePublicDirectory(null), "outputFile.txt");
-        if(!file.exists()){
+        //File dir = new File (path + "/Stepping");
+        //dir.mkdirs();
+        File file;
+        FileOutputStream fos;
+        /*if(!file.exists()){
             try{
                 file.createNewFile();
             }
             catch(Exception ex){
                 ex.printStackTrace();
             }
-        }
-        String content = data.toString();
-        FileOutputStream fos = null;
+        }*/
+        String content = "THIS SHOULD WORK BUT IT DOESN'T";
+        String filename = "outputFile.txt";
+        //FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(dir);
-            /*BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
+            file = new File(Environment.getExternalStorageDirectory(), "Stepping");
+
+            fos = new FileOutputStream(file);
+            fos.write(content.getBytes());
+            fos.close();
+            /*fos = ctx.openFileOutput(filename, Context.MODE_APPEND);
+            fos.write(content.getBytes());
+            fos.close();
+            BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
             buf.write(content);
             buf.newLine();
             buf.close();*/
@@ -56,7 +74,7 @@ public class storeData implements Runnable {
         catch(Exception ex){
             ex.printStackTrace();
         }
-        try{
+        /*try{
             try{
                 fos.write(content.getBytes());
                 fos.close();
@@ -67,6 +85,6 @@ public class storeData implements Runnable {
         }
         catch(Exception ex){
             ex.printStackTrace();
-        }
+        }*/
     }
 }
