@@ -19,9 +19,11 @@ public class storeData extends Thread {
     private boolean stop = false;
     private Context ctx;
     public String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Stepping";
+    File dir = new File (path + "/saveFile");
 
     public storeData (BlockingQueue<putData> writingDataQueue){
         writingQueue = writingDataQueue;
+        dir.mkdir();
     }
 
     @Override
@@ -44,8 +46,8 @@ public class storeData extends Thread {
         //File sdCard = Environment.getExternalStoragePublicDirectory("sdcard");
         //File dir = new File (path + "/Stepping");
         //dir.mkdirs();
-        File file;
-        FileOutputStream fos;
+        //File file;
+        //FileOutputStream fos;
         /*if(!file.exists()){
             try{
                 file.createNewFile();
@@ -54,16 +56,24 @@ public class storeData extends Thread {
                 ex.printStackTrace();
             }
         }*/
-        String content = "THIS SHOULD WORK BUT IT DOESN'T";
-        String filename = "outputFile.txt";
+        String content = data.toString();
+        String fileName = "outputFile.txt";
         //FileOutputStream fos = null;
         try {
+            File gpxfile = new File(path, fileName);
+
+
+            FileWriter writer = new FileWriter(gpxfile,true);
+            writer.append(content+"\n\n");
+            writer.flush();
+            writer.close();
+            /*
             file = new File(Environment.getExternalStorageDirectory(), "Stepping");
 
             fos = new FileOutputStream(file);
             fos.write(content.getBytes());
             fos.close();
-            /*fos = ctx.openFileOutput(filename, Context.MODE_APPEND);
+            fos = ctx.openFileOutput(filename, Context.MODE_APPEND);
             fos.write(content.getBytes());
             fos.close();
             BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
