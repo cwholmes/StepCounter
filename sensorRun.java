@@ -33,12 +33,12 @@ public class sensorRun extends Activity implements SensorEventListener {
     }
 
     private void getAccelerometer(SensorEvent event) {
-        float[] values = event.values;
+        float[] these_values = event.values;
         // Movement
-        float x = values[0];
-        float y = values[1];
-        float z = values[2];
-
+        float x = these_values[0];
+        float y = these_values[1];
+        float z = these_values[2];
+        // Adding a random comment
         long actualTime = event.timestamp;
 
     }
