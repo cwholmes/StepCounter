@@ -16,7 +16,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity implements SensorEventListener ,
         OnClickListener {
     private SensorManager _sensorManager;
-    private Button btnStart, btnStop;
+    private Button btnStar, btnStop;
     private boolean started = false;
     private ArrayList sensorData;
 
@@ -27,11 +27,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         _sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorData = new ArrayList();
 
-        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStar = (Button) findViewById(R.id.btnStart);
         btnStop = (Button) findViewById(R.id.btnStop);
-        btnStart.setOnClickListener(this);
+        btnStar.setOnClickListener(this);
         btnStop.setOnClickListener(this);
-        btnStart.setEnabled(true);
+        btnStar.setEnabled(true);
         btnStop.setEnabled(false);
     }
 
